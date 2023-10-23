@@ -11,7 +11,7 @@ import modules.utils as utils
 # Hyperparameters
 epochs = 10
 batch_size = 64
-learning_rate = 0.001
+learning_rate = 1e-4
 shuffle = True
 num_workers = 4
 
@@ -36,6 +36,7 @@ def main():
 	model = Net().to(device)
 	criterion = nn.CrossEntropyLoss()
 	optimizer = optim.Adam(model.parameters(), lr=learning_rate)
+	scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=1, gamma=0.9)
 
 	# Training loop
 	for epoch in range(epochs):
@@ -58,6 +59,7 @@ def main():
 			remaining = ' ' * (bar_length - len(progress))
 			print(f'\r[{progress}{remaining}] {percent_complete * 100:.2f}%\tLoss: {loss.item():.4f}\ttime: {time.time() - start_time:.4f}s', end='', flush=True)
 		print('')
+		scheduler.step()
 		
 	# Validation loop # Only for adjusting hyperparameters
 	# model.eval()
