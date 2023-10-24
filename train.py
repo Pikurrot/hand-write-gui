@@ -15,14 +15,17 @@ learning_rate = 1e-4
 shuffle = True
 num_workers = 4
 
+def get_transforms():
+	return transforms.Compose([transforms.ToTensor(), 
+							transforms.Normalize((0.5,), (0.5,))])
+
 def main():
 	# Check if GPU is available
 	device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 	pin_memory = True if device == 'cuda' else False
 
 	# Load the MNIST dataset
-	transform = transforms.Compose([transforms.ToTensor(), 
-									transforms.Normalize((0.5,), (0.5,))])
+	transform = get_transforms()
 	train_data = datasets.MNIST(root='data', train=True, download=True, transform=transform)
 	test_data = datasets.MNIST(root='data', train=False, download=True, transform=transform)
 
