@@ -27,7 +27,7 @@ def predict(img):
 def main():
 	global model, dev
 	dev = device('cuda' if cuda.is_available() else 'cpu')
-	model = load_model(os.path.join('models', 'model_1.safetensors'))
+	model = load_model(os.path.join('models', 'model_0.safetensors'))
 
 	img_size = 512
 
