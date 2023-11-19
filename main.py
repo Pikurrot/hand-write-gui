@@ -52,23 +52,30 @@ def update_model(model_path_saved, model_path_hf, model_path_upload, source, log
 			
 	return logs + f'Model updated successfully. Moved to {device}\n'
 
-def predict(img):
+def predict(img, logs):
 	global model, device
 	if img is None:
 		return None
 	if model is None:
 		gr.Info('No model loaded. Using default from Huggingface...')
+		logs += 'No model loaded. Using default from Huggingface\n'
 		try:
 			load_model_huggingface('Pikurrot/digitnet-tiny/digitnet-tiny.safetensors')
 		except Exception as e:
 			gr.Error(f'Could not load model: {str(e)}')
+			logs += f'Could not load model: {str(e)}\n'
 			return None
-	input = get_transforms()(img.resize((28, 28))).to(device)
-	output = model(input) # returns logits
-	prob_sorted, indices = output.sort(descending=True)
-	prob_sorted, indices = prob_sorted.cpu().detach().numpy(), indices.cpu().detach().numpy()
-	prob_sorted = np.exp(prob_sorted) # reverse the log used in log_softmax()
-	return {str(i): float(prob) for i, prob in zip(indices[0], prob_sorted[0])}
+	try:
+		input = get_transforms()(img.resize((28, 28))).to(device)
+		output = model(input) # returns logits
+		prob_sorted, indices = output.sort(descending=True)
+		prob_sorted, indices = prob_sorted.cpu().detach().numpy(), indices.cpu().detach().numpy()
+		prob_sorted = np.exp(prob_sorted) # reverse the log used in log_softmax()
+		return {str(i): float(prob) for i, prob in zip(indices[0], prob_sorted[0])}, logs
+	except Exception as e:
+		gr.Error(f'Model prediction failed: {str(e)}')
+		logs += f'Model prediction failed: {str(e)}\n'
+		return None, logs
 
 def main():
 	global model, device
@@ -107,7 +114,7 @@ A simple interface to recognize handwriting using deep learning models''')
 					update_btn = gr.Button(value='Update')
 				logs = gr.Textbox(None, placeholder='No model loaded', lines=25, max_lines=25, label='Logs', interactive=False, autoscroll=True)
 
-		in_img.change(predict, in_img, label)
+		in_img.change(predict, [in_img, logs], [label, logs])
 		update_btn.click(
 			update_model,
 			[model_path_saved, model_path_hf, model_path_upload, source, logs],
