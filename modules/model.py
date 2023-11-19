@@ -8,7 +8,6 @@ class Net(nn.Module):
 		self.conv1 = nn.Conv2d(1, 16, 3)		# shape: (batch_size, 16, 26, 26)
 		self.pool = nn.MaxPool2d(2, 2)			# shape: (batch_size, 16, 13, 13)
 		self.conv2 = nn.Conv2d(16, 32, 3)		# shape: (batch_size, 32, 11, 11)
-		self.drop = nn.Dropout2d(0.25)
 		self.fc1 = nn.Linear(32 * 11 * 11, 64)	# shape: (batch_size, 64)
 		self.fc2 = nn.Linear(64, 10)			# shape: (batch_size, 10)
 

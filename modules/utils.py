@@ -18,3 +18,10 @@ def get_save_file(save_dir: str, file_format: str = '.safetensors') -> str:
 	# Determine the next available file name with counter
 	next_counter = highest_counter + 1
 	return os.path.join(save_dir, f'model_{next_counter}{file_format}')
+
+def list_models(file_types: list = ['safetensors']) -> list:
+	models = []
+	for file in os.listdir('models'):
+		if file.split('.')[-1] in file_types:
+			models.append(file)
+	return models
