@@ -42,7 +42,6 @@ def update_model(model_path_saved, model_path_hf, model_path_upload, source, log
 		except Exception as e:
 			return logs + f'Could not load model: {str(e)}\n'
 	elif source == 'Uploaded':
-		print(dir(model_path_upload), model_path_upload)
 		if not model_path_upload:
 			return logs + 'Could not load model: No model uploaded\n'
 		try:
@@ -55,7 +54,7 @@ def update_model(model_path_saved, model_path_hf, model_path_upload, source, log
 def predict(img, logs):
 	global model, device
 	if img is None:
-		return None
+		return None, logs
 	if model is None:
 		gr.Info('No model loaded. Using default from Huggingface...')
 		logs += 'No model loaded. Using default from Huggingface\n'
@@ -64,7 +63,7 @@ def predict(img, logs):
 		except Exception as e:
 			gr.Error(f'Could not load model: {str(e)}')
 			logs += f'Could not load model: {str(e)}\n'
-			return None
+			return None, logs
 	try:
 		input = get_transforms()(img.resize((28, 28))).to(device)
 		output = model(input) # returns logits
