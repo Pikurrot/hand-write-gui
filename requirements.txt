@@ -1,6 +1,7 @@
-gradio==3.40.1
+gradio==3.45.2
 numpy==1.23.5
 regex==2023.8.8
 torch==2.0.1
 torchvision==0.15.2
 safetensors==0.3.2
+huggingface_hub==0.19.3
